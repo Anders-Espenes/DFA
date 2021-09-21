@@ -1,12 +1,11 @@
 from typing import Optional, Type
 
-
 class Node:
 	def __init__(self, value, data, accepting):
-		self.value = value
-		self.data = data
-		self.accepting: bool = accepting
-		self.children: list[Node] = []
+		self.value = value							# 
+		self.data = data							#
+		self.accepting: bool = accepting 			# Label, true DFA allows ending of input strings here
+		self.children: list[Node] = [] 				# Child nodes left to right
 
 	def setChild(self, child):
 		self.children.append(child)
@@ -20,6 +19,10 @@ class Node:
 				return child
 		else:
 			return None
+
+	def destroy(self):
+		for child in self.children:
+			child.destroy
 
 	def print_nodes(self):
 		"""Prints node and all child nodes in depth first order"""
