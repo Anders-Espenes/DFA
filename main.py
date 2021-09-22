@@ -95,22 +95,22 @@ def test_Apta() -> Node:
 	node101 = Node("1", "101", False)
 	node100 = Node("0", "100", True)
 
-	root_node.setChild(node0)
-	root_node.setChild(node1)
+	root_node.addChild(node0)
+	root_node.addChild(node1)
 
-	node0.setChild(node00)
-	node0.setChild(node01)
-	node1.setChild(node10)
-	node1.setChild(node11)
+	node0.addChild(node00)
+	node0.addChild(node01)
+	node1.addChild(node10)
+	node1.addChild(node11)
 
-	node00.setChild(node000)
-	node00.setChild(node001)
-	node01.setChild(node010)
-	node01.setChild(node011)
-	node10.setChild(node100)
-	node10.setChild(node101)
-	node11.setChild(node110)
-	node11.setChild(node111)
+	node00.addChild(node000)
+	node00.addChild(node001)
+	node01.addChild(node010)
+	node01.addChild(node011)
+	node10.addChild(node100)
+	node10.addChild(node101)
+	node11.addChild(node110)
+	node11.addChild(node111)
 
 	return root_node
 
@@ -131,21 +131,25 @@ def build_prefix_tree(dfa: DFA, length: int) -> Apta:
 			for trans in nodes[0]:
 				next_node = current_node.transition(trans)
 				if next_node is None:
-					current_node.setChild(
+					current_node.addChild(
 						Node(value=trans, data=nodes[0], accepting=nodes[1]))
 				else:
 					current_node = next_node
 	return Apta(root_node)	# Returns the root node of the tree
 
 
-def match_labels(i: Node, j: Node, temp=True) -> bool:
-	if (i.children) and (j.children):
-		for child1, child2 in zip(i.children,j.children):
-			if(child1.accepting == child2.accepting):
-				match_labels(child1, child2)
-			else: temp = False
+def match_labels(root: Node, child: Node, temp=True) -> bool:
+	if (root.children) and (child.children):						# Check if both nodes still have children to compare
+		for child1, child2 in zip(root.children,child.children): 	# Compare two and two children
+			if(child1.accepting == child2.accepting):				# Check if both children have the same label
+				match_labels(child1, child2)						# Check if the childrens children have the same label
+			else: temp = False										# A child node was did not have the same label
 	return temp
 
+def merge_states(root: Node, child: Node):
+	if match_labels(root, child):	# Check if nodes can be merged
+		root.setChild(child, root)
+		child.destroy()
 
 
 def temp():
@@ -165,7 +169,7 @@ def temp():
 		start=1
 	)
 
-def greedy():
+def greedy(apta):
 	pass
 
 
@@ -178,13 +182,27 @@ def main():
 	# apta = build_prefix_tree(dfa, 3)
 	apta = Apta(test_Apta())
 	node1 = apta.input("")
-	node1.print_nodes()
+	print("ID1: " + str(id(node1)))
 	node2 = apta.input("0")
-	node2.print_nodes()
-	print(match_labels(node1, node2))
-	# apta.print()
+	print("ID1: " + str(id(node2)))
+	print("\nNode1:\n") ;node1.print_nodes()
+	print("\nNode2:\n") ;node2.print_nodes()
+	# print(match_labels(node1, node2))
+	print("\nBefore merge \n")
+	apta.print()
+	merge_states(node1, node2)
+	print("\nAfter merge \n")
+	apta.print()
 
+	# root_node = Node("", "e", False)
 
+	# node0 = Node("0", "0", False)
+	# node1 = Node("1", "1", True)
+	# root_node.addChild(node0)
+	# root_node.addChild(node1)
+	# node00 = Node("0", "00", False)
+	# root_node.setChild(node1, root_node)
+	# root_node.print_nodes()
 if __name__ == "__main__":
 	main()
 	#generateStrings()
