@@ -146,13 +146,12 @@ def match_labels(root: Node, child: Node, temp=True) -> bool:
 			else: temp = False										# A child node was did not have the same label
 	return temp
 
-def merge_states(root: Node, child: Node):
-	if match_labels(root, child):	# Check if nodes can be merged
-		root.setChild(child, root)
-		child.destroy()
+def merge_states(root: Node, child: Node, target: Node):
+	root.setChild(child, target)
+	child.destroy()
 
 
-def temp():
+def dfa_ten():
 	return DFA(
 		alphabet=['0', '1'],
 		trans={1:  {'0': 6,  '1': 7},
@@ -169,8 +168,40 @@ def temp():
 		start=1
 	)
 
-def greedy(apta):
-	pass
+def dfa_eight():
+	return DFA(
+		alphabet=['0', '1', '2'],
+		trans={1: {'0': 3,  '1': 5, '2': 2},
+			   2: {'0': 4,  '1': 1, '2': 6},
+			   3: {'0': 1,  '1': 4, '2': 7},
+			   4: {'0': 2,  '1': 8, '2': 3},
+			   5: {'0': 7,  '1': 1, '2': 6},
+			   6: {'0': 8,  '1': 5, '2': 2},
+			   7: {'0': 5,  '1': 8, '2': 3},
+			   8: {'0': 6,  '1': 4, '2': 7}},
+		accepting=[1],
+		start=1
+	)
+
+
+def greedy(startNode: Node, unique = []):
+	"""
+	For every node in the tree, check if it is unique compared to prevously visited nodes.
+	If NOT unique merge the node with node checking against.
+	If unique add to list of unique
+	"""
+	if (len(unique) == 0):
+		unique.append(startNode)
+	for root in unique:	
+		if root.children:	# Check if given root has children
+			for child in root.children:		# Check if any children can merge with the current uniques
+				isUnique = True				# Becomes false if a node is able to merge
+				for node in unique:			# Test if any children can merge with any of the unique nodes
+					if match_labels(node, child):	# Match labels between two nodes
+						merge_states(root, child, node)	# Merge the nodes
+						isUnique = False	# Could merge nodes
+				if isUnique:				# No child where able to merge with a unique node, it is therefore a unique node
+					unique.append(child)  # Could not merge nodes, node is unique
 
 
 def backtracking():
@@ -178,31 +209,14 @@ def backtracking():
 
 
 def main():
-	dfa = temp()
-	# apta = build_prefix_tree(dfa, 3)
-	apta = Apta(test_Apta())
-	node1 = apta.input("")
-	print("ID1: " + str(id(node1)))
-	node2 = apta.input("0")
-	print("ID1: " + str(id(node2)))
-	print("\nNode1:\n") ;node1.print_nodes()
-	print("\nNode2:\n") ;node2.print_nodes()
-	# print(match_labels(node1, node2))
-	print("\nBefore merge \n")
-	apta.print()
-	merge_states(node1, node2)
-	print("\nAfter merge \n")
-	apta.print()
+	dfa = dfa_eight()
+	# dfa = dfa_ten()
+	apta = build_prefix_tree(dfa, 5)
+	# apta = Apta(test_Apta())
 
-	# root_node = Node("", "e", False)
-
-	# node0 = Node("0", "0", False)
-	# node1 = Node("1", "1", True)
-	# root_node.addChild(node0)
-	# root_node.addChild(node1)
-	# node00 = Node("0", "00", False)
-	# root_node.setChild(node1, root_node)
-	# root_node.print_nodes()
+	greedy(apta.root)
+	apta.print()
+	
 if __name__ == "__main__":
 	main()
 	#generateStrings()
