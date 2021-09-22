@@ -15,18 +15,12 @@ class Apta:
         current_node = self.root
         for trans in input_string:
             current_node = current_node.transition(trans)
+        print(id(current_node))
         return current_node
 
     def print(self):
         self.root.print_nodes()
 
-
-	# Get depth of child
-	# Generate? all strings from alphabet for depth length
-	# use strings/transitions generated and compere result from child and parent
-	# If all strings give the same result, replace child with parent
-	# else try next child
-	# Call same function on children, that is != itself
     def get_depth(self, node: Node, i: int = 0) -> int:
         if node.children:
             count = i + 1
