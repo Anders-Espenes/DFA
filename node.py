@@ -40,12 +40,13 @@ class Node:
 			child.destroy()
 		del self
 
-	def print_nodes(self):
+	def print_nodes(self, unique = []):
 		"""Prints node and all child nodes in depth first order"""
+		unique.append(self)
 		print(self)
 		for child in self.children:
-			if child != self:	# To prevent calling on a reference to self
-				child.print_nodes()
+			if child not in unique:	# To prevent calling on a reference to self
+				child.print_nodes(unique)
 
 
 	def __repr__(self):
@@ -55,7 +56,7 @@ class Node:
 		return f"Data: {self.data}, acc: {self.accepting}"
 
 	def __str__(self):
-		return f"Data: {self.data}, acc: {self.accepting}"
+		return f"Data: {self.data}, acc: {self.accepting}, children: {self.children}"
 
 	# Bad practice, just call str(object) instead, just for fun here
 	def __add__(self, other):
