@@ -1,7 +1,10 @@
+from copy import deepcopy
 from typing import List # Allow for typesetting lists
 from node import Node
 from DFA import DFA
 class Apta:
+    stack = []
+
     def __init__(self, root: Node = None):
         self.root = root
 
@@ -16,12 +19,13 @@ class Apta:
             current_node = current_node.next(trans)
         return current_node
 
+    def copy_tree(self):
+        self.stack.append(deepcopy(self.root))
+
     def print(self):
         self.root.print_nodes([])
 
-    def get_depth(self, node: Node, i: int = 0) -> int:
-        if node.children:
-            count = i + 1
-            return self.get_depth(node.children[0], count)
-        else:
-            return i
+    def pop_tail(self):
+        self.stack.pop(-1)
+
+    

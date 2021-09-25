@@ -144,7 +144,8 @@ def backtracking():
 	pass
 
 def test(dfa: DFA, apta: Apta ) -> bool:
-	for s in generate_strings(1000, 1, 3):
+	for s in generate_strings(1, 2, 10):
+		print(s)
 		if dfa.input(s) != apta.input(s).accepting:
 			print("Something is wrong!")
 			return False
@@ -154,12 +155,17 @@ def test(dfa: DFA, apta: Apta ) -> bool:
 
 def main():
 	depth = 3
-	dfa = dfa_eight()
-	# dfa = dfa_ten()
+	# dfa = dfa_eight()
+	dfa = dfa_ten()
 	apta = build_prefix_tree(dfa, depth)
+	apta.copy_tree()
 	greedy(apta.root)
-	apta.print()
-	test(dfa, apta)
+	apta.copy_tree()
+	print("Inital")
+	apta.stack[0].print_nodes([])
+	print("Greedy algorithm applied:")	
+	apta.stack[1].print_nodes([])
+	# test(dfa, apta)
 	
 if __name__ == "__main__":
 	main()
