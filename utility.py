@@ -19,6 +19,3 @@ def generate_strings(nr_strings, alphabet, length):
     for _ in range(0, nr_strings):
         yield rng_string(alphabet, randint(0, length))
 
-for i in generate_strings(10, 1, 10):
-    print(i)
-
