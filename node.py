@@ -1,4 +1,5 @@
 from typing import Optional, Type
+from copy import copy, deepcopy
 
 class Node:
 	def __init__(self, value, data, accepting):
@@ -73,3 +74,21 @@ class Node:
 
 	def __radd__(self, other):
 		return other + str(self)
+
+	def __copy__(self):
+		return type(self)(self.value, self.data)
+
+	def __deepcopy__(self, memo):
+		id_self = id(self)
+		_copy = memo.get(id_self)
+		if _copy is None:
+			_copy = type(self)(
+				deepcopy(self.value, memo),
+				deepcopy(self.data, memo),
+				deepcopy(self.accepting, memo))
+			memo[id_self] = _copy
+			for child in self.children:
+				_copy.children.append(deepcopy(child, memo))
+			memo[id_self] = _copy
+		return _copy
+
