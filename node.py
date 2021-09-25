@@ -17,17 +17,26 @@ class Node:
 	def setChild(self, child, node):
 		"""Changes childs reference to given node"""
 		try:
-		 	self.children[self.children.index(child)] = node
+			# Set empty node
+			if(node.data == 'e'): 
+				node.value = child.value
+			
+			# self.children[self.children.index(child)] = node
+			self.children[int(child.value)] = node
 		except:
 			print("Child node not found")
 
 	def transition(self, value):
 		for child in self.children:
-			if child.value == value and child != self:
+			if child.value == value:
 				return child
 		else:
 			return None
 	
+	def next(self, index):
+		return self.children[int(index)]
+
+
 	def getChild(self, node):
 		""" Find a given node amongst the children """
 		for child in self.children:
@@ -40,12 +49,12 @@ class Node:
 			child.destroy()
 		del self
 
-	def print_nodes(self, unique = []):
+	def print_nodes(self, unique):
 		"""Prints node and all child nodes in depth first order"""
 		unique.append(self)
 		print(self)
 		for child in self.children:
-			if child not in unique:	# To prevent calling on a reference to self
+			if child not in unique:  # To prevent calling on a reference to self
 				child.print_nodes(unique)
 
 
@@ -53,7 +62,7 @@ class Node:
 		'''This method returns an offical string representation of an object
 		And is supposed to be used to convert the entire object to a string format
 		TLDR: Not meant for printing use __str__ instead'''
-		return f"Data: {self.data}, acc: {self.accepting}"
+		return f"Data: {self.data}, acc: {self.accepting}, value: {self.value}"
 
 	def __str__(self):
 		return f"Data: {self.data}, acc: {self.accepting}, children: {self.children}"

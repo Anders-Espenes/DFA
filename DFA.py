@@ -13,8 +13,8 @@ class DFA:
 	def input(self, input_string: str = "") -> bool:
 		state = self.start_state
 		for trans in input_string:
+			# print(str(trans) + " ->", end=" ")
 			state = self.transitions[state][trans]
-
 		return state in self.accepting_state
 
 	# Generates all possible combinations of the alphabet in the DFA up to a given length
