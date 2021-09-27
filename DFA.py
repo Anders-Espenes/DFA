@@ -12,9 +12,10 @@ class DFA:
 	# Input traverses the DFA printing out the state of the ending node of the string
 	def input(self, input_string: str = "") -> bool:
 		state = self.start_state
-		for trans in input_string:
-			# print(str(trans) + " ->", end=" ")
-			state = self.transitions[state][trans]
+		if input_string is not '':
+			for trans in input_string:
+				# print(str(trans) + " ->", end=" ")
+				state = self.transitions[state][trans]
 		return state in self.accepting_state
 
 	# Generates all possible combinations of the alphabet in the DFA up to a given length
@@ -36,6 +37,17 @@ class DFA:
 				if p:
 					print(f"String: {string}, result: {self.input(string)}")
 
+		return string_results
+
+	def generate_strings(self, length: int, p: bool = False):
+		string_results = []
+
+		for i in range(0, length+1):
+			string_results.append([])
+			all_string = it.product(self.alphabet, repeat=i)
+			for s in all_string:
+				string = "".join(map(str, s))
+				string_results[i].append(string)
 		return string_results
 
 

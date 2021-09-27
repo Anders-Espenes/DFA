@@ -1,47 +1,8 @@
+from typing import List
 from DFA import DFA
 from node import Node
 from apta import Apta
-from utility import generate_strings
-
-
-def test_Apta() -> Node:
-	root_node = Node("", "e", False)
-
-	node0 = Node("0", "0", False)
-	node1 = Node("1", "1", True)
-
-	node00 = Node("0", "00", False)
-	node01 = Node("1", "01", True)
-	node10 = Node("0", "10", True)
-	node11 = Node("1", "11", False)
-
-	node000 = Node("0", "000", False)
-	node001 = Node("1", "001", True)
-	node010 = Node("0", "010", True)
-	node011 = Node("1", "011", False)
-	node111 = Node("1", "111", True)
-	node110 = Node("0", "110", False)
-	node101 = Node("1", "101", False)
-	node100 = Node("0", "100", True)
-
-	root_node.addChild(node0)
-	root_node.addChild(node1)
-
-	node0.addChild(node00)
-	node0.addChild(node01)
-	node1.addChild(node10)
-	node1.addChild(node11)
-
-	node00.addChild(node000)
-	node00.addChild(node001)
-	node01.addChild(node010)
-	node01.addChild(node011)
-	node10.addChild(node100)
-	node10.addChild(node101)
-	node11.addChild(node110)
-	node11.addChild(node111)
-
-	return root_node
+from utility import generate_strings, generate_test_strings
 
 
 def dfa_eight():
@@ -79,14 +40,13 @@ def dfa_ten():
 
 
 # Check if every node have corresponding labels
-def build_prefix_tree(dfa: DFA, length: int) -> Apta:
-	all_strings = dfa.generate_all_strings(length)
+def build_prefix_tree(all_strings) -> Apta:
 
 	# removed the first element that is the empty string
 	# Pop pop since its a List[List[]]
 	root_string = all_strings.pop(0).pop(0)
 
-	root_node = Node(value=root_string[0], data="e", accepting=root_string[1])
+	root_node = Node(data="e", accepting=root_string[1])
 
 	# adding nodes in breadth first
 	for level in all_strings:
@@ -96,10 +56,41 @@ def build_prefix_tree(dfa: DFA, length: int) -> Apta:
 				next_node = current_node.transition(trans)
 				if next_node is None:
 					current_node.addChild(
-						Node(value=trans, data=nodes[0], accepting=nodes[1]))
+						Node(data=nodes[0], accepting=nodes[1]))
 				else:
 					current_node = next_node
 	return Apta(root_node)	# Returns the root node of the tree
+
+
+def build_prefix_tree2(depth, nr_of_children) -> Apta:
+	root_node = Node(data = "e")
+	# adding nodes in breadth first
+	current_level = []
+	next_level = []
+	current_level.append(root_node)
+	for level in range(0, depth): 									# Go down one level in the tree
+		for node in range(0, nr_of_children**level):				# Next node on the level
+			current_node = current_level[node]
+			for i in range(0, nr_of_children):						# Give current node a new child
+				current_node.addChild(Node())
+				next_level.append(current_node.next(i))
+		current_level = next_level
+		next_level = []
+		
+
+	return Apta(root_node)  # Returns the root node of the tree
+
+
+def assign_labels(root: Node, strings: List, dfa: DFA):
+	for string in strings:
+		for node in string:
+			current_node = root
+			for char in node:
+				temp = current_node.transition(char)
+				if temp is not None:
+					current_node = temp
+			current_node.accepting = dfa.input(node)
+			current_node.data = node
 
 
 # TODO: Clean this up a bit
@@ -144,8 +135,8 @@ def backtracking():
 	pass
 
 def test(dfa: DFA, apta: Apta ) -> bool:
-	for s in generate_strings(1, 2, 10):
-		print(s)
+	for s in generate_test_strings(1000, 1, 3):
+		# print(s)
 		if dfa.input(s) != apta.input(s).accepting:
 			print("Something is wrong!")
 			return False
@@ -157,15 +148,18 @@ def main():
 	depth = 3
 	# dfa = dfa_eight()
 	dfa = dfa_ten()
-	apta = build_prefix_tree(dfa, depth)
-	apta.copy_tree()
-	greedy(apta.root)
-	apta.copy_tree()
-	print("Inital")
-	apta.stack[0].print_nodes([])
-	print("Greedy algorithm applied:")	
-	apta.stack[1].print_nodes([])
-	# test(dfa, apta)
+	# apta = build_prefix_tree(dfa.generate_all_strings(depth))
+	apta = build_prefix_tree2(depth, 2)
+	assign_labels(apta.root, generate_strings(10, 1, depth), dfa)
+	apta.print()
+	# apta.copy_tree()
+	# greedy(apta.root)
+	# apta.copy_tree()
+	# print("\nInital")
+	# apta.stack[0].print_nodes([])
+	# print("\nGreedy algorithm applied:")	
+	# apta.stack[1].print_nodes([])
+	test(dfa, apta)
 	
 if __name__ == "__main__":
 	main()
