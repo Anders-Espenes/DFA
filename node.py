@@ -2,10 +2,12 @@ from typing import Optional, Type
 from copy import copy, deepcopy
 
 class Node:
-	def __init__(self, data = 0, accepting = None):
+	def __init__(self, data = 0, value = -1, accepting = None):
 		self.data = data							#
 		self.accepting: bool = accepting 			# Label, true DFA allows ending of input strings here
 		self.children: list[Node] = [] 				# Child nodes left to right
+		if value is not '':
+			self.value = int(value)
 
 	def addChild(self, child):
 		self.children.append(child)
@@ -28,11 +30,18 @@ class Node:
 
 	# TODO: Rewrite to use children position in array instead of value
 	def transition(self, value):
-		try:
-			temp = self.children[int(value)]
-			return temp
-		except:
-			return None
+		if value != '':
+			for child in self.children:
+				if child.value == int(value):
+					return child
+		return None
+
+
+		# try:
+			# temp = self.children[int(value)]
+			# return temp
+		# except:
+			# return None
 	
 	def next(self, index):
 		return self.children[int(index)]

@@ -40,7 +40,7 @@ def dfa_ten():
 
 
 # Check if every node have corresponding labels
-def build_prefix_tree(all_strings) -> Apta:
+def build_prefix_tree_temp(all_strings) -> Apta:
 
 	# removed the first element that is the empty string
 	# Pop pop since its a List[List[]]
@@ -62,35 +62,18 @@ def build_prefix_tree(all_strings) -> Apta:
 	return Apta(root_node)	# Returns the root node of the tree
 
 
-def build_prefix_tree2(depth, nr_of_children) -> Apta:
-	root_node = Node(data = "e")
-	# adding nodes in breadth first
-	current_level = []
-	next_level = []
-	current_level.append(root_node)
-	for level in range(0, depth): 									# Go down one level in the tree
-		for node in range(0, nr_of_children**level):				# Next node on the level
-			current_node = current_level[node]
-			for i in range(0, nr_of_children):						# Give current node a new child
-				current_node.addChild(Node())
-				next_level.append(current_node.next(i))
-		current_level = next_level
-		next_level = []
-		
 
-	return Apta(root_node)  # Returns the root node of the tree
-
-
-def assign_labels(root: Node, strings: List, dfa: DFA):
+def build_prefix_tree(strings: List, dfa: DFA):
+	root = Node(data="")		# Create root node
 	for string in strings:
-		for node in string:
-			current_node = root
-			for char in node:
-				temp = current_node.transition(char)
-				if temp is not None:
-					current_node = temp
-			current_node.accepting = dfa.input(node)
-			current_node.data = node
+		current_node = root
+		for char in string:
+			temp = current_node.transition(char)
+			if temp is None:
+				current_node.addChild(Node(value=char, data=current_node.data+char))
+			current_node = current_node.transition(char)
+		current_node.accepting = dfa.input(string)
+	return Apta(root)
 
 
 # TODO: Clean this up a bit
@@ -134,6 +117,9 @@ def greedy(startNode: Node, unique = []):
 def backtracking():
 	pass
 
+def dfa_complete():
+	pass
+
 def test(dfa: DFA, apta: Apta ) -> bool:
 	for s in generate_test_strings(1000, 1, 3):
 		# print(s)
@@ -145,13 +131,16 @@ def test(dfa: DFA, apta: Apta ) -> bool:
 
 
 def main():
-	depth = 3
+	depth = 8
 	# dfa = dfa_eight()
 	dfa = dfa_ten()
 	# apta = build_prefix_tree(dfa.generate_all_strings(depth))
-	apta = build_prefix_tree2(depth, 2)
-	assign_labels(apta.root, generate_strings(10, 1, depth), dfa)
-	apta.print()
+	# apta = build_prefix_tree2(depth, 2)
+	# apta = build_prefix_tree(generate_strings(1000, 1, 10))
+	apta = build_prefix_tree(generate_strings(1000, 1, 10), dfa)
+	apta = build_prefix_tree(generate_strings(1000, 1, 100), dfa)
+	apta = build_prefix_tree(generate_strings(1000, 1, 1000), dfa)
+	# apta.print()
 	# apta.copy_tree()
 	# greedy(apta.root)
 	# apta.copy_tree()
