@@ -12,7 +12,7 @@ class DFA:
 	# Input traverses the DFA printing out the state of the ending node of the string
 	def input(self, input_string: str = "") -> bool:
 		state = self.start_state
-		if input_string is not '':
+		if input_string != '':
 			for trans in input_string:
 				# print(str(trans) + " ->", end=" ")
 				state = self.transitions[state][trans]
@@ -43,11 +43,10 @@ class DFA:
 		string_results = []
 
 		for i in range(0, length+1):
-			string_results.append([])
 			all_string = it.product(self.alphabet, repeat=i)
 			for s in all_string:
 				string = "".join(map(str, s))
-				string_results[i].append(string)
+				string_results.append(string)
 		return string_results
 
 

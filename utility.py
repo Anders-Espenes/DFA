@@ -29,5 +29,5 @@ def generate_strings(nr_strings, alphabet, length):
     """
     strings = []
     for _ in range(0, nr_strings):
-        strings.append([rng_string(alphabet, randint(0, length))])
+        strings.append(rng_string(alphabet, randint(0, length)))
     return strings
