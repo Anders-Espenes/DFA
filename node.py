@@ -2,8 +2,7 @@ from typing import Optional, Type
 from copy import copy, deepcopy
 
 class Node:
-	def __init__(self, value, data, accepting):
-		self.value = value							# 
+	def __init__(self, data = 0, accepting = None):
 		self.data = data							#
 		self.accepting: bool = accepting 			# Label, true DFA allows ending of input strings here
 		self.children: list[Node] = [] 				# Child nodes left to right
@@ -19,19 +18,20 @@ class Node:
 		"""Changes childs reference to given node"""
 		try:
 			# Set empty node
-			if(node.data == 'e'): 
-				node.value = child.value
+			if(node.accepting == 'e'): 
+				node.accepting = child.accepting
 			
-			# self.children[self.children.index(child)] = node
-			self.children[int(child.value)] = node
+			self.children[self.children.index(child)] = node
+			# self.children[int(child.value)] = node
 		except:
 			print("Child node not found")
 
+	# TODO: Rewrite to use children position in array instead of value
 	def transition(self, value):
-		for child in self.children:
-			if child.value == value:
-				return child
-		else:
+		try:
+			temp = self.children[int(value)]
+			return temp
+		except:
 			return None
 	
 	def next(self, index):
@@ -63,7 +63,7 @@ class Node:
 		'''This method returns an offical string representation of an object
 		And is supposed to be used to convert the entire object to a string format
 		TLDR: Not meant for printing use __str__ instead'''
-		return f"Data: {self.data}, acc: {self.accepting}, value: {self.value}"
+		return f"Data: {self.data}, acc: {self.accepting}"
 
 	def __str__(self):
 		return f"Data: {self.data}, acc: {self.accepting}, children: {self.children}"
@@ -76,14 +76,13 @@ class Node:
 		return other + str(self)
 
 	def __copy__(self):
-		return type(self)(self.value, self.data)
+		return type(self)(self.data)
 
 	def __deepcopy__(self, memo):
 		id_self = id(self)
 		_copy = memo.get(id_self)
 		if _copy is None:
 			_copy = type(self)(
-				deepcopy(self.value, memo),
 				deepcopy(self.data, memo),
 				deepcopy(self.accepting, memo))
 			memo[id_self] = _copy
@@ -91,4 +90,3 @@ class Node:
 				_copy.children.append(deepcopy(child, memo))
 			memo[id_self] = _copy
 		return _copy
-
