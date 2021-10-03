@@ -114,8 +114,29 @@ def greedy(startNode: Node, unique = []):
 					unique.append(child)  # Could not merge nodes, node is unique
 
 
-def backtracking():
-	pass
+def backtracking(apta: Apta, unique = []):
+	"""
+		Similar to greedy
+		Attempt to match labels
+		If a match is found, copy the tree and merge the nodes
+		Continue until there are no nodes in tree that are not unique
+		See if the tree is complete, check if every node has labels, if not assign label at random
+		Test if the tree is correct, if not backtrack, pop tree from list
+	"""
+	if(len(unique) == 0):
+		unique.append(apta.root)
+	for root in unique:
+		if root.children:
+			for child in root.children:
+				isUnique = True
+				for node in unique:
+					if match_labels(child, node):
+						apta.copy_tree()
+						merge_states(root, child, node)
+						isUnique = False
+				if isUnique:
+					unique.append(child)
+
 
 def dfa_complete(apta: Apta):
 	apta.complete()
@@ -135,29 +156,33 @@ def test(dfa: DFA, apta: Apta, nr_of_strings, alphabet, depth) -> bool:
 
 
 def main():
-	depth = 10
+	depth = 3
 	alphabet = 1
 	nr_of_strings = 1000
 	# dfa = dfa_eight()
 	dfa = dfa_ten()
 	# apta = build_prefix_tree(dfa.generate_strings(depth), dfa)
-	# apta = build_prefix_tree2(depth, 2)
+
 	apta = build_prefix_tree(generate_strings(nr_of_strings, alphabet, depth), dfa)
 	# apta = build_prefix_tree(generate_strings(1000, 1, 10), dfa)
 	# apta = build_prefix_tree(generate_strings(1000, 1, 100), dfa)
 	# apta = build_prefix_tree(generate_strings(1000, 1, 1000), dfa)
-	# apta.print()
-	# apta.copy_tree()
+	apta.print()
 	# greedy(apta.root)
+	print('\n')
+	apta.print()
+
+
 	# apta.copy_tree()
 	# print("\nInital")
 	# apta.stack[0].print_nodes([])
 	# print("\nGreedy algorithm applied:")
 	# apta.stack[1].print_nodes([])
-	# apta.print()
+
+
+	# backtracking(apta)
 	# dfa_complete(apta)
-	# apta.print()
 	test(dfa, apta, nr_of_strings, alphabet, depth)
-	
+
 if __name__ == "__main__":
 	main()

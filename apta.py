@@ -16,7 +16,8 @@ class Apta:
         current_node = self.root
         for trans in input_string:
             # print(str(trans) + " ->", end=" ")
-            current_node = current_node.transition(trans)
+            if current_node.children:
+                current_node = current_node.transition(trans)
         return current_node
 
     def copy_tree(self):
@@ -30,5 +31,6 @@ class Apta:
 
     def pop_tail(self):
         self.stack.pop(-1)
+        self.root = self.stack[-1]
 
     
