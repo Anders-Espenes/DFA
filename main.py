@@ -77,10 +77,11 @@ def build_prefix_tree(strings: List, dfa: DFA, root=Node(data="")):
 
 # TODO: Clean this up a bit
 def match_labels(root: Node, child: Node, temp=True) -> bool:
-	if (root.accepting == child.accepting):
+	if (root.accepting == child.accepting or root.accepting==None or child.accepting==None):
 		if (len(root.children) != 0) and (len(child.children) != 0):	# Check if both nodes still have children to compare
 			for child1, child2 in zip(root.children,child.children): 	# Compare two and two children
-				if(child1.accepting == child2.accepting):				# Check if both children have the same label
+				# Check if both children have the same label
+				if(child1.accepting == child2.accepting or child1.accepting == None or child2.accepting == None):
 					temp = match_labels(child1, child2, temp)			# Check if the childrens children have the same label
 				else: return False										# A child node did not have the same label
 	else: return False
@@ -113,7 +114,7 @@ def greedy(startNode: Node, unique = []):
 					unique.append(child)  # Could not merge nodes, node is unique
 
 
-def backtracking(apta: Apta, unique = []):
+def backtracking(apta: Apta, current_root, unique = []):
 	"""
 		Similar to greedy
 		Attempt to match labels
@@ -123,22 +124,33 @@ def backtracking(apta: Apta, unique = []):
 		Test if the tree is correct, if not backtrack, pop tree from list
 	"""
 	if(len(unique) == 0):
-		unique.append(apta.root)
-	for root in unique:
-		if root.children:
-			for child in root.children:
-				isUnique = True
-				for node in unique:
-					if match_labels(child, node):
-						apta.copy_tree()
-						merge_states(root, child, node)
-						isUnique = False
-				if isUnique:
-					unique.append(child)
+		unique.append(current_root)
+	
+	# Check if finished
+
+	# Check promising
 
 
-def dfa_complete(apta: Apta):
-	apta.complete()
+	# Call yourself
+
+	# 
+	
+	
+	# for root in unique:
+		# if root.children:
+			# for child in root.children:
+				# isUnique = True
+				# for node in unique:
+					# if match_labels(child, node):
+						# apta.copy_tree()
+						# merge_states(root, child, node)
+						# isUnique = False
+				# if isUnique:
+					# unique.append(child)
+
+
+def dfa_complete(apta: Apta, alphabet):
+	return apta.complete(alphabet)
 
 def test(dfa: DFA, apta: Apta, nr_of_strings, alphabet, depth) -> bool:
 	try:
@@ -166,12 +178,7 @@ def main():
 	# apta = build_prefix_tree(generate_strings(1000, 1, 10), dfa)
 	# apta = build_prefix_tree(generate_strings(1000, 1, 100), dfa)
 	# apta = build_prefix_tree(generate_strings(1000, 1, 1000), dfa)
-	apta.print()
-	greedy(apta.root)
-	print('\n')
-	apta.print()
-
-
+	# greedy(apta.root)
 	# apta.copy_tree()
 	# print("\nInital")
 	# apta.stack[0].print_nodes([])
@@ -179,8 +186,11 @@ def main():
 	# apta.stack[1].print_nodes([])
 
 
-	# backtracking(apta)
-	# dfa_complete(apta)
+	backtracking(apta, apta.root)
+
+	if dfa_complete(apta, alphabet):
+		print("Complete")
+	else: print("Not complete")
 	test(dfa, apta, nr_of_strings, alphabet, depth)
 
 if __name__ == "__main__":

@@ -22,15 +22,18 @@ class Node:
 		"""Changes childs reference to given node"""
 		try:
 			# Set empty node
-			# if(node.accepting == None): 
-				# node.accepting = child.accepting
+			if(node.accepting == None): 	# Copy labels if node is empty
+				node.accepting = child.accepting
+			elif(child.accepting == None):
+				child.accepting = node.acccepting
+
 			if(node.data == ''):
 				node.value = child.value
 
 			# self.children[self.children.index(child)] = node
 			self.children[int(child.value)] = node
 		except:
-			print("Child node not found")
+			self.addChild(node)	# Spliced in the sub-tree
 
 	def transition(self, value):
 		if value != '':
@@ -55,19 +58,26 @@ class Node:
 			child.destroy()
 		del self
 
-	def check_if_label(self, unique):
+	def check_if_label(self, alphabet, unique) -> bool:
 		""" Check if node has a label, assigns random label if not
 			Checks if any children have a label
 		"""
-		if(self.accepting == None):
-			if randint(0,1)  == 0:
-				self.accepting = True
-			else:
-				self.accepting = False
-		unique.append(self)
-		for child in self.children:
-			if child not in unique:
-				child.check_if_label(unique)
+		if len(self.children) == alphabet + 1:
+
+			if(self.accepting == None):
+				if randint(0,1)  == 0:
+					self.accepting = True
+				else:
+					self.accepting = False
+			unique.append(self)
+			for child in self.children:
+				if child not in unique:
+					if not child.check_if_label(alphabet, unique):
+						return False
+		elif not self.children: return True	# Bottom of the tree
+		else: return False
+		return True
+
 
 	def print_nodes(self, unique):
 		"""Prints node and all child nodes in depth first order"""
