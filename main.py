@@ -63,8 +63,7 @@ def build_prefix_tree_temp(all_strings) -> Apta:
 
 
 
-def build_prefix_tree(strings: List, dfa: DFA):
-	root = Node(data="")		# Create root node
+def build_prefix_tree(strings: List, dfa: DFA, root=Node(data="")):
 	for string in strings:
 		current_node = root
 		for char in string:
@@ -168,7 +167,7 @@ def main():
 	# apta = build_prefix_tree(generate_strings(1000, 1, 100), dfa)
 	# apta = build_prefix_tree(generate_strings(1000, 1, 1000), dfa)
 	apta.print()
-	# greedy(apta.root)
+	greedy(apta.root)
 	print('\n')
 	apta.print()
 

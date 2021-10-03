@@ -12,6 +12,7 @@ class Node:
 
 	def addChild(self, child):
 		self.children.append(child)
+		self.children.sort(key=lambda x: x.value)
 
 	def removeChild(self, child):
 		self.children.remove(child)
