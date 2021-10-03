@@ -121,13 +121,17 @@ def dfa_complete(apta: Apta):
 	apta.complete()
 
 def test(dfa: DFA, apta: Apta, nr_of_strings, alphabet, depth) -> bool:
-	for s in generate_test_strings(nr_of_strings, alphabet, depth):
-		# print(s)
-		if dfa.input(s) != apta.input(s).accepting:
-			print("Something is wrong!")
-			return False
-	print("Sucess")
-	return True
+	try:
+		for s in generate_test_strings(nr_of_strings, alphabet, depth):
+			# print(s)
+			if dfa.input(s) != apta.input(s).accepting:
+				print("Something is wrong!")
+				return False
+		print("Sucess")
+		return True
+	except:
+		print("Transition was not valid")
+		return False
 
 
 def main():
@@ -136,9 +140,9 @@ def main():
 	nr_of_strings = 1000
 	# dfa = dfa_eight()
 	dfa = dfa_ten()
-	apta = build_prefix_tree(dfa.generate_strings(depth), dfa)
+	# apta = build_prefix_tree(dfa.generate_strings(depth), dfa)
 	# apta = build_prefix_tree2(depth, 2)
-	# apta = build_prefix_tree(generate_strings(nr_of_strings, alphabet, depth), dfa)
+	apta = build_prefix_tree(generate_strings(nr_of_strings, alphabet, depth), dfa)
 	# apta = build_prefix_tree(generate_strings(1000, 1, 10), dfa)
 	# apta = build_prefix_tree(generate_strings(1000, 1, 100), dfa)
 	# apta = build_prefix_tree(generate_strings(1000, 1, 1000), dfa)
@@ -152,6 +156,7 @@ def main():
 	# apta.stack[1].print_nodes([])
 	# apta.print()
 	# dfa_complete(apta)
+	# apta.print()
 	test(dfa, apta, nr_of_strings, alphabet, depth)
 	
 if __name__ == "__main__":

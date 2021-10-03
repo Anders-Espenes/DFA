@@ -3,11 +3,11 @@ from typing import Optional, Type
 from copy import copy, deepcopy
 
 class Node:
-	def __init__(self, data = 0, value = -1, accepting = None):
+	def __init__(self, data = -1, value = -1, accepting = None):
 		self.data = data							#
 		self.accepting: bool = accepting 			# Label, true DFA allows ending of input strings here
 		self.children: list[Node] = [] 				# Child nodes left to right
-		if value is not '':
+		if value != '':
 			self.value = int(value)
 
 	def addChild(self, child):
@@ -34,7 +34,7 @@ class Node:
 			for child in self.children:
 				if child.value == int(value):
 					return child
-		return None
+		return None	# Return an empty node, as it was not found
 
 
 		# try:
