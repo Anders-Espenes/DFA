@@ -5,8 +5,10 @@ from DFA import DFA
 class Apta:
     stack = []
 
-    def __init__(self,root: Node = None,):
+    def __init__(self, alphabet, depth, root: Node = None):
         self.root = root
+        self.alphabet = alphabet
+        self.depth = depth
 
     def setRoot(self, root):
         self.root = root
@@ -26,11 +28,9 @@ class Apta:
     def print(self):
         self.root.print_nodes([])
 
-    def complete(self, alphabet) -> bool:
-        return self.root.check_if_label(alphabet=alphabet, unique=[])
+    def complete(self) -> bool:
+        return self.root.check_if_label(alphabet=self.alphabet, unique=[])
 
     def pop_tail(self):
-        self.stack.pop(-1)
         self.root = self.stack[-1]
-
-    
+        self.stack.pop(-1)

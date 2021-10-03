@@ -16,6 +16,9 @@ class Node:
 
 	def removeChild(self, child):
 		self.children.remove(child)
+
+	def copy_children(self):
+		return list(self.children)
 	
 	# Set a child node to given node
 	def setChild(self, child, node):

@@ -1,3 +1,5 @@
+from copy import deepcopy
+from math import atan
 from typing import List
 from DFA import DFA
 from node import Node
@@ -72,7 +74,7 @@ def build_prefix_tree(strings: List, dfa: DFA, root=Node(data="")):
 				current_node.addChild(Node(value=char, data=current_node.data+char))
 			current_node = current_node.transition(char)
 		current_node.accepting = dfa.input(string)
-	return Apta(root)
+	return root
 
 
 # TODO: Clean this up a bit
@@ -90,6 +92,21 @@ def match_labels(root: Node, child: Node, temp=True) -> bool:
 def merge_states(root: Node, child: Node, target: Node):
 	root.setChild(child, target)
 	child.destroy()
+
+
+def test(dfa: DFA, apta: Apta, nr_of_strings, alphabet, depth) -> bool:
+	try:
+		for s in generate_test_strings(nr_of_strings, alphabet, depth):
+			# print(s)
+			if dfa.input(s) != apta.input(s).accepting:
+				print("Something is wrong!")
+				return False
+		print("Sucess")
+		return True
+	except:
+		print("Transition was not valid")	# Path does not exists for the given input string
+		return False
+
 
 
 
@@ -114,7 +131,7 @@ def greedy(startNode: Node, unique = []):
 					unique.append(child)  # Could not merge nodes, node is unique
 
 
-def backtracking(apta: Apta, current_root, unique = []):
+def backtracking(apta: Apta, current_node, unique = []):
 	"""
 		Similar to greedy
 		Attempt to match labels
@@ -123,58 +140,49 @@ def backtracking(apta: Apta, current_root, unique = []):
 		See if the tree is complete, check if every node has labels, if not assign label at random
 		Test if the tree is correct, if not backtrack, pop tree from list
 	"""
+	# print(unique)
 	if(len(unique) == 0):
-		unique.append(current_root)
+		current_node = apta.root
+		unique.append(apta.root)
 	
 	# Check if finished
-
+	if apta.complete() == True:
+		return
 	# Check promising
+	for root in unique:
+		if root.children:
+			for child in root.children:
+				if child not in unique:
+					for node in unique:
+						if match_labels(child, node):
+							temp_node = deepcopy(node)
+							merge_states(root, child, node)
+							backtracking(apta, list(unique))
+							node = temp_node
+						else: unique.append(child)
+	return
+	# if current_node.children:
+		# for child in current_node.children:
+			# for node in unique:
+				# if match_labels(child, node):
+					# apta.copy_tree()
+					# merge_states(current_node, child, node)
+					# backtracking(apta, apta.get_unique(unique))
+			# unique.append(child)
+			# backtracking(apta, child)
 
-
-	# Call yourself
-
-	# 
-	
-	
-	# for root in unique:
-		# if root.children:
-			# for child in root.children:
-				# isUnique = True
-				# for node in unique:
-					# if match_labels(child, node):
-						# apta.copy_tree()
-						# merge_states(root, child, node)
-						# isUnique = False
-				# if isUnique:
-					# unique.append(child)
-
-
-def dfa_complete(apta: Apta, alphabet):
-	return apta.complete(alphabet)
-
-def test(dfa: DFA, apta: Apta, nr_of_strings, alphabet, depth) -> bool:
-	try:
-		for s in generate_test_strings(nr_of_strings, alphabet, depth):
-			# print(s)
-			if dfa.input(s) != apta.input(s).accepting:
-				print("Something is wrong!")
-				return False
-		print("Sucess")
-		return True
-	except:
-		print("Transition was not valid")
-		return False
 
 
 def main():
 	depth = 3
 	alphabet = 1
-	nr_of_strings = 1000
+	nr_of_strings = 5
+	apta = Apta(alphabet=alphabet, depth=depth)
 	# dfa = dfa_eight()
 	dfa = dfa_ten()
-	# apta = build_prefix_tree(dfa.generate_strings(depth), dfa)
+	# apta.setRoot(build_prefix_tree(dfa.generate_strings(depth), dfa))
 
-	apta = build_prefix_tree(generate_strings(nr_of_strings, alphabet, depth), dfa)
+	apta.setRoot(build_prefix_tree(generate_strings(nr_of_strings, alphabet, depth), dfa))
 	# apta = build_prefix_tree(generate_strings(1000, 1, 10), dfa)
 	# apta = build_prefix_tree(generate_strings(1000, 1, 100), dfa)
 	# apta = build_prefix_tree(generate_strings(1000, 1, 1000), dfa)
@@ -185,12 +193,9 @@ def main():
 	# print("\nGreedy algorithm applied:")
 	# apta.stack[1].print_nodes([])
 
-
+	
 	backtracking(apta, apta.root)
-
-	if dfa_complete(apta, alphabet):
-		print("Complete")
-	else: print("Not complete")
+	apta.print()
 	test(dfa, apta, nr_of_strings, alphabet, depth)
 
 if __name__ == "__main__":
