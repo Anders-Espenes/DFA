@@ -26,8 +26,8 @@ class Apta:
     def print(self):
         self.root.print_nodes([])
 
-    def complete(self):
-        self.root.check_if_label([])
+    def complete(self, alphabet) -> bool:
+        return self.root.check_if_label(alphabet=alphabet, unique=[])
 
     def pop_tail(self):
         self.stack.pop(-1)
