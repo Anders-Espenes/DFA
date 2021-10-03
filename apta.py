@@ -17,7 +17,7 @@ class Apta:
         for trans in input_string:
             # print(str(trans) + " ->", end=" ")
             if current_node.children:
-                current_node = current_node.transition(trans)
+                current_node = current_node.next(trans)
         return current_node
 
     def copy_tree(self):
