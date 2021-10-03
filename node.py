@@ -1,3 +1,4 @@
+from random import randint
 from typing import Optional, Type
 from copy import copy, deepcopy
 
@@ -58,6 +59,20 @@ class Node:
 		for child in self.children: # Remove children
 			child.destroy()
 		del self
+
+	def check_if_label(self, unique):
+		""" Check if node has a label, assigns random label if not
+			Checks if any children have a label
+		"""
+		if(self.accepting == None):
+			if randint(0,1)  == 0:
+				self.accepting = True
+			else:
+				self.accepting = False
+		unique.append(self)
+		for child in self.children:
+			if child not in unique:
+				child.check_if_label(unique)
 
 	def print_nodes(self, unique):
 		"""Prints node and all child nodes in depth first order"""

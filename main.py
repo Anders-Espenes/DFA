@@ -117,8 +117,9 @@ def greedy(startNode: Node, unique = []):
 def backtracking():
 	pass
 
-def dfa_complete():
-	pass
+def dfa_complete(apta: Apta):
+	apta.complete()
+	apta.print()
 
 def test(dfa: DFA, apta: Apta ) -> bool:
 	for s in generate_test_strings(1000, 1, 3):
@@ -136,10 +137,10 @@ def main():
 	dfa = dfa_ten()
 	# apta = build_prefix_tree(dfa.generate_all_strings(depth))
 	# apta = build_prefix_tree2(depth, 2)
-	# apta = build_prefix_tree(generate_strings(1000, 1, 10))
-	apta = build_prefix_tree(generate_strings(1000, 1, 10), dfa)
-	apta = build_prefix_tree(generate_strings(1000, 1, 100), dfa)
-	apta = build_prefix_tree(generate_strings(1000, 1, 1000), dfa)
+	apta = build_prefix_tree(generate_strings(3, 1, 3), dfa)
+	# apta = build_prefix_tree(generate_strings(1000, 1, 10), dfa)
+	# apta = build_prefix_tree(generate_strings(1000, 1, 100), dfa)
+	# apta = build_prefix_tree(generate_strings(1000, 1, 1000), dfa)
 	# apta.print()
 	# apta.copy_tree()
 	# greedy(apta.root)
@@ -148,7 +149,9 @@ def main():
 	# apta.stack[0].print_nodes([])
 	# print("\nGreedy algorithm applied:")	
 	# apta.stack[1].print_nodes([])
-	test(dfa, apta)
+	# test(dfa, apta)
+	apta.print()
+	dfa_complete(apta)
 	
 if __name__ == "__main__":
 	main()
