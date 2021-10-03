@@ -119,10 +119,9 @@ def backtracking():
 
 def dfa_complete(apta: Apta):
 	apta.complete()
-	apta.print()
 
-def test(dfa: DFA, apta: Apta ) -> bool:
-	for s in generate_test_strings(1000, 1, 3):
+def test(dfa: DFA, apta: Apta, nr_of_strings, alphabet, depth) -> bool:
+	for s in generate_test_strings(nr_of_strings, alphabet, depth):
 		# print(s)
 		if dfa.input(s) != apta.input(s).accepting:
 			print("Something is wrong!")
@@ -132,12 +131,14 @@ def test(dfa: DFA, apta: Apta ) -> bool:
 
 
 def main():
-	depth = 8
+	depth = 10
+	alphabet = 1
+	nr_of_strings = 1000
 	# dfa = dfa_eight()
 	dfa = dfa_ten()
-	# apta = build_prefix_tree(dfa.generate_all_strings(depth))
+	apta = build_prefix_tree(dfa.generate_strings(depth), dfa)
 	# apta = build_prefix_tree2(depth, 2)
-	apta = build_prefix_tree(generate_strings(3, 1, 3), dfa)
+	# apta = build_prefix_tree(generate_strings(nr_of_strings, alphabet, depth), dfa)
 	# apta = build_prefix_tree(generate_strings(1000, 1, 10), dfa)
 	# apta = build_prefix_tree(generate_strings(1000, 1, 100), dfa)
 	# apta = build_prefix_tree(generate_strings(1000, 1, 1000), dfa)
@@ -147,11 +148,11 @@ def main():
 	# apta.copy_tree()
 	# print("\nInital")
 	# apta.stack[0].print_nodes([])
-	# print("\nGreedy algorithm applied:")	
+	# print("\nGreedy algorithm applied:")
 	# apta.stack[1].print_nodes([])
-	# test(dfa, apta)
-	apta.print()
-	dfa_complete(apta)
+	# apta.print()
+	# dfa_complete(apta)
+	test(dfa, apta, nr_of_strings, alphabet, depth)
 	
 if __name__ == "__main__":
 	main()
