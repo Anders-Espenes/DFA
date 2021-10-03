@@ -131,7 +131,7 @@ def greedy(startNode: Node, unique = []):
 					unique.append(child)  # Could not merge nodes, node is unique
 
 
-def backtracking(apta: Apta, current_node, unique = []):
+def backtracking(apta: Apta, unique = []):
 	"""
 		Similar to greedy
 		Attempt to match labels
@@ -142,7 +142,6 @@ def backtracking(apta: Apta, current_node, unique = []):
 	"""
 	# print(unique)
 	if(len(unique) == 0):
-		current_node = apta.root
 		unique.append(apta.root)
 	
 	# Check if finished
@@ -172,31 +171,50 @@ def backtracking(apta: Apta, current_node, unique = []):
 			# backtracking(apta, child)
 
 
+def task_2():
+	depth = 8
+	alphabet = 2
+	nr_of_strings = 1000
 
-def main():
-	depth = 3
+	# Comment what DFA you want
+	dfa = dfa_eight()
+	# dfa = dfa_ten()
+
+	# Build the apta tree
+	apta = Apta(alphabet=alphabet, depth=depth)
+	apta.setRoot(build_prefix_tree(dfa.generate_strings(depth), dfa))
+
+	# Perform the greedy algorithm
+	greedy(apta.root)
+	apta.print()
+	# Generate test strings and see if the apta tree is correct
+	test(dfa, apta, nr_of_strings, alphabet, depth)
+
+def task_3():
+	depth = 8
 	alphabet = 1
 	nr_of_strings = 5
-	apta = Apta(alphabet=alphabet, depth=depth)
+
+	# Set dfa, same as before
 	# dfa = dfa_eight()
 	dfa = dfa_ten()
-	# apta.setRoot(build_prefix_tree(dfa.generate_strings(depth), dfa))
-
-	apta.setRoot(build_prefix_tree(generate_strings(nr_of_strings, alphabet, depth), dfa))
-	# apta = build_prefix_tree(generate_strings(1000, 1, 10), dfa)
-	# apta = build_prefix_tree(generate_strings(1000, 1, 100), dfa)
-	# apta = build_prefix_tree(generate_strings(1000, 1, 1000), dfa)
-	# greedy(apta.root)
-	# apta.copy_tree()
-	# print("\nInital")
-	# apta.stack[0].print_nodes([])
-	# print("\nGreedy algorithm applied:")
-	# apta.stack[1].print_nodes([])
 
 	
-	backtracking(apta, apta.root)
+	# Generate apta tree
+	apta = Apta(alphabet=alphabet, depth=depth)
+	apta.setRoot(build_prefix_tree(generate_strings(nr_of_strings, alphabet, depth), dfa))	# Testing
+	# apta = build_prefix_tree(generate_strings(1000, 1, 10), dfa)	# Oppgave 
+	# apta = build_prefix_tree(generate_strings(1000, 1, 100), dfa)
+	# apta = build_prefix_tree(generate_strings(1000, 1, 1000), dfa)
+
+	# Run the backtracking
+	backtracking(apta)
 	apta.print()
 	test(dfa, apta, nr_of_strings, alphabet, depth)
+
+def main():
+	task_2()
+	# task_3()
 
 if __name__ == "__main__":
 	main()
