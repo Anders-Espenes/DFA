@@ -21,11 +21,13 @@ class Node:
 		"""Changes childs reference to given node"""
 		try:
 			# Set empty node
-			if(node.accepting == None): 
-				node.accepting = child.accepting
-			
-			self.children[self.children.index(child)] = node
-			# self.children[int(child.value)] = node
+			# if(node.accepting == None): 
+				# node.accepting = child.accepting
+			if(node.data == ''):
+				node.value = child.value
+
+			# self.children[self.children.index(child)] = node
+			self.children[int(child.value)] = node
 		except:
 			print("Child node not found")
 
@@ -35,13 +37,6 @@ class Node:
 				if child.value == int(value):
 					return child
 		return None	# Return an empty node, as it was not found
-
-
-		# try:
-			# temp = self.children[int(value)]
-			# return temp
-		# except:
-			# return None
 	
 	def next(self, index):
 		return self.children[int(index)]
@@ -86,7 +81,7 @@ class Node:
 		'''This method returns an offical string representation of an object
 		And is supposed to be used to convert the entire object to a string format
 		TLDR: Not meant for printing use __str__ instead'''
-		return f"Data: {self.data}, acc: {self.accepting}"
+		return f"Data: {self.data}, acc: {self.accepting}, value: {self.value}"
 
 	def __str__(self):
 		return f"Data: {self.data}, acc: {self.accepting}, children: {self.children}"
@@ -107,6 +102,7 @@ class Node:
 		if _copy is None:
 			_copy = type(self)(
 				deepcopy(self.data, memo),
+				deepcopy(self.value, memo),
 				deepcopy(self.accepting, memo))
 			memo[id_self] = _copy
 			for child in self.children:
