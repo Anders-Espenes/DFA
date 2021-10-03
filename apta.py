@@ -5,7 +5,7 @@ from DFA import DFA
 class Apta:
     stack = []
 
-    def __init__(self, root: Node = None):
+    def __init__(self,root: Node = None,):
         self.root = root
 
     def setRoot(self, root):

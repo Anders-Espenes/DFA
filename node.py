@@ -21,7 +21,7 @@ class Node:
 		"""Changes childs reference to given node"""
 		try:
 			# Set empty node
-			if(node.accepting == 'e'): 
+			if(node.accepting == None): 
 				node.accepting = child.accepting
 			
 			self.children[self.children.index(child)] = node
@@ -29,7 +29,6 @@ class Node:
 		except:
 			print("Child node not found")
 
-	# TODO: Rewrite to use children position in array instead of value
 	def transition(self, value):
 		if value != '':
 			for child in self.children:
